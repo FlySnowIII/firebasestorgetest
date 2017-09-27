@@ -10,6 +10,8 @@
     <progress id="uploader" value="0" max="100"></progress>
     <br>
     <input type="file" id="filebutton" accept=".csv" value="Upload"/>
+    <br>
+    <div id="result"></div>
 
     
 <script src="https://www.gstatic.com/firebasejs/4.4.0/firebase.js"></script>
@@ -29,32 +31,75 @@
   var filebutton = document.getElementById('filebutton');
   
   filebutton.addEventListener('change',function(e){
-      var file = e.target.files[0];
+    var file = e.target.files[0];
 
-      var storageRef = firebase.storage().ref('StayInfoList/' + file.name);
+    // console.log(file.name);
 
-      console.log(storageRef.location.path);
+    // var storageRef = firebase.storage().ref('StayInfoList/' + file.name);
 
-      var task = storageRef.put(file);
+    // console.log(storageRef.location.path);
 
-      task.on('state_changed',
+    // var task = storageRef.put(file);
 
-        function progress(snap){
-            var per = (snap.bytesTransferred / snap.totalBytes)*100;
-            uploader.value = per;
-        },
+    // task.on('state_changed',
 
-        function error(err){
-            console.log('Error: ',err);
-        },
+    //     function progress(snap){
+    //         var per = (snap.bytesTransferred / snap.totalBytes)*100;
+    //         uploader.value = per;
+    //     },
 
-        function complete(){
-            alert('UpLoad Complete!');
+    //     function error(err){
+    //         console.log('Error: ',err);
+    //     },
+
+    //     function complete(){
+    //         alert('UpLoad Complete!');
+    //     }
+    // );
+
+    var localFilePath = filebutton.value;
+    console.log(localFilePath);
+
+    var file = e.target.files[0];
+    
+    var reader = new FileReader();
+    // ファイル読み取りに失敗したとき
+    reader.onerror = function() {
+        alert('ファイル読み取りに失敗しました')
+    }
+    // ファイル読み取りに成功したとき
+    reader.onload = function() {
+        // 行単位で配列にする
+        var lineArr = reader.result.split("\n");
+        // 行と列の二次元配列にする
+        var itemArr = [];
+        for (var i = 0; i < lineArr.length; i++) {
+            itemArr[i] = lineArr[i].split(",");
         }
 
+        // tableで出力
+        var insert = '<table>';
+        for (var i = 0; i < itemArr.length; i++) {
+            insert += '<tr>';
+            for (var j = 0; j < itemArr[i].length; j++) {
+                insert += '<td>';
+                insert += itemArr[i][j];
+                insert += '</td>';
 
-      );
-  })
+                console.log(itemArr[i][j]);
+            }
+            insert += '</tr>';
+        }
+        insert += '</table>';
+        result.innerHTML = insert;
+    }
+
+    // ファイル読み取りを実行
+    reader.readAsText(file,'Shift_JIS');
+    
+  });
+
+
 
 </script>
 </body>
