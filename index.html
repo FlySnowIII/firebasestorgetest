@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Firebase Storage Upload Test</title>
+</head>
+<body>
+    <progress id="uploader" value="0" max="100"></progress>
+    <br>
+    <input type="file" id="filebutton" accept=".csv" value="Upload"/>
+
+    
+<script src="https://www.gstatic.com/firebasejs/4.4.0/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyCSBr1wdf7HpD3w-UbHNI5Gz1PUJgsCylE",
+    authDomain: "fir-study-3d198.firebaseapp.com",
+    databaseURL: "https://fir-study-3d198.firebaseio.com",
+    projectId: "fir-study-3d198",
+    storageBucket: "fir-study-3d198.appspot.com",
+    messagingSenderId: "434245683821"
+  };
+  firebase.initializeApp(config);
+
+  var uploader = document.getElementById('uploader');
+  var filebutton = document.getElementById('filebutton');
+  
+  filebutton.addEventListener('change',function(e){
+      var file = e.target.files[0];
+
+      var storageRef = firebase.storage().ref('StayInfoList/' + file.name);
+
+      console.log(storageRef.location.path);
+
+      var task = storageRef.put(file);
+
+      task.on('state_changed',
+
+        function progress(snap){
+            var per = (snap.bytesTransferred / snap.totalBytes)*100;
+            uploader.value = per;
+        },
+
+        function error(err){
+            console.log('Error: ',err);
+        },
+
+        function complete(){
+            alert('UpLoad Complete!');
+        }
+
+
+      );
+  })
+
+</script>
+</body>
+</html>
