@@ -77,27 +77,49 @@
             itemArr[i] = lineArr[i].split(",");
         }
 
+        var stayInfoList = new Array();
+        var tempStayInfoObj = new Object();
+
         // tableで出力
-        var insert = '<table>';
+        var insert = '<table border=1 style="font-size:10px">';
         for (var i = 0; i < itemArr.length; i++) {
+            tempStayInfoObj = new Object();
+            tempStayInfoObj["reservationNumber"]    = replaceDoubleQuotes(itemArr[i][3]);
+            tempStayInfoObj["guestName"]            = replaceDoubleQuotes(itemArr[i][16]);
+            tempStayInfoObj["roomNumber"]           = replaceDoubleQuotes(itemArr[i][2]);
+            tempStayInfoObj["stayPersonCount1"]     = replaceDoubleQuotes(itemArr[i][9]);
+            tempStayInfoObj["StayPersonCount3"]     = replaceDoubleQuotes(itemArr[i][11]);
+            tempStayInfoObj["StayPersonCount4"]     = replaceDoubleQuotes(itemArr[i][12]);
+            tempStayInfoObj["StayPersonCount5"]     = replaceDoubleQuotes(itemArr[i][13]);
+
+
+            stayInfoList.push(tempStayInfoObj);
+
+
             insert += '<tr>';
             for (var j = 0; j < itemArr[i].length; j++) {
                 insert += '<td>';
                 insert += itemArr[i][j];
                 insert += '</td>';
-
-                console.log(itemArr[i][j]);
             }
             insert += '</tr>';
         }
         insert += '</table>';
         result.innerHTML = insert;
+
+        console.log(stayInfoList);
     }
 
     // ファイル読み取りを実行
     reader.readAsText(file,'Shift_JIS');
     
   });
+
+
+  function replaceDoubleQuotes(str){
+    return String(str).replace(/\"/g, "");
+  }
+
 
 
 
